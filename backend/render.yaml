@@ -1,0 +1,41 @@
+# Render Blueprint for FluxShare Backend
+# Deploy with external PostgreSQL (Supabase/Neon/Render DB)
+
+services:
+  # Spring Boot Backend
+  - type: web
+    name: fluxshare-backend
+    env: docker
+    plan: starter
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+        # Set this in Render dashboard to your external DB URL
+        # Supabase: postgresql://postgres.[project-ref].supabase.co:5432/postgres
+        # Neon: postgresql://[user]:[password]@[host].neon.tech:5432/[dbname]
+        # Render: Get from Render PostgreSQL service
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+        # Set in Render dashboard
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+        # Set in Render dashboard (mark as secret)
+      - key: FLUXSHARE_MASTER_KEY
+        generateValue: true
+        sync: false
+        # Auto-generated secure key, or set your own
+      - key: FLUXSHARE_STORAGE_BASE_PATH
+        value: /app/storage/encrypted
+      - key: FLUXSHARE_STORAGE_TEMP_PATH
+        value: /app/storage/temp
+      - key: SERVER_PORT
+        value: 8080
+      - key: JAVA_OPTS
+        value: -Xms512m -Xmx1024m -XX:+UseG1GC

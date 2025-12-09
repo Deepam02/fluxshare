@@ -1,0 +1,91 @@
+server:
+  port: ${SERVER_PORT:8081}
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    db:
+      enabled: true
+
+spring:
+  application:
+    name: fluxshare-backend
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/fluxshare}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:your-password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      keepalive-time: 30000
+      connection-test-query: SELECT 1
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+      file-size-threshold: 2MB
+
+fluxshare:
+  storage:
+    base-path: ./storage/encrypted
+    temp-path: ./storage/temp
+  encryption:
+    algorithm: AES/GCM/NoPadding
+    key-size: 256
+    iv-size: 12
+    tag-size: 128
+    master-key: ${FLUXSHARE_MASTER_KEY:changeme-generate-secure-key-in-production}
+  share:
+    id-length: 8
+    default-expiry-hours: 24
+    max-expiry-hours: 168
+  rate-limit:
+    enabled: true
+    requests-per-minute: 10
+    preview-enabled: true
+  cleanup:
+    cron: "0 */15 * * * *"
+    enabled: true
+  access-log:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.fluxshare: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"

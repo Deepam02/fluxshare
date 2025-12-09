@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Maven
+target/
+!target/fluxshare-backend-*.jar
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Documentation
+*.md
+!README.md
+
+# Storage (runtime directories)
+storage/
+temp/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+src/test/
+
+# Environment files
+.env
+.env.local
